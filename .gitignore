@@ -1,0 +1,62 @@
+# Виртуальное окружение
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.virtualenvs/
+
+# Python кэш
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Данные и файлы пользователей
+data/
+storage/
+backups/
+logs/
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Файлы конфигурации с секретами
+.env
+config.local.py
+
+# Логи
+*.log
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Тестовые файлы
+test_*.py
+*_test.py
+
+# Зависимости для разных ОС
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Обложки
+*.pyc
+*.pyo
+*.pyd
