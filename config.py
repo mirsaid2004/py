@@ -3,8 +3,29 @@ import os
 from datetime import timedelta
 
 
+def _require_secret_key() -> str:
+    """Читает SECRET_KEY из переменной окружения.
+
+    Этим ключом Flask подписывает cookie сессий. Если ключ записан прямо
+    в коде, любой, кто увидит исходники, сможет подделать cookie админа.
+    Поэтому на сервере ключ обязателен, и без него приложение не стартует.
+    """
+    key = os.environ.get('SECRET_KEY')
+    if not key:
+        raise RuntimeError(
+            "SECRET_KEY environment variable is not set.\n"
+            "Add this to the top of your WSGI file, above the app import:\n"
+            "    os.environ['SECRET_KEY'] = '<your-random-key>'\n"
+            "Generate a key with:\n"
+            '    python -c "import secrets; print(secrets.token_hex(32))"'
+        )
+    return key
+
+
 class Config:
     # Базовые настройки
+    # Внимание: этот ключ только для локальной разработки.
+    # На сервере используется ProductionConfig, который берёт ключ из окружения.
     SECRET_KEY = 'dev-secret-key-change-in-production-2026'
     DEBUG = False  # На сервере всегда False
     TESTING = False
@@ -87,9 +108,12 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'production-secret-key-change-this')
     SESSION_COOKIE_SECURE = True
     IS_PYTHONANYWHERE = True
+
+    def __init__(self):
+        # Ключ берётся только из окружения, запасного значения в коде нет.
+        self.SECRET_KEY = _require_secret_key()
 
 
 class TestingConfig(Config):
