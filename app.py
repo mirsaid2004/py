@@ -53,27 +53,14 @@ def initialize_data():
     # Создаем пользователей
     users = storage.get_users()
     if not users:
-        from services import UserService
-        from models import UserRoles, UserStatus, AccessType
-
-        user_service = UserService(storage)
-
-        admin_data = {
-            'full_name': config.DEFAULT_ADMIN['full_name'],
-            'login': config.DEFAULT_ADMIN['login'],
-            'email': config.DEFAULT_ADMIN['email'],
-            'phone': config.DEFAULT_ADMIN['phone'],
-            'password': config.DEFAULT_ADMIN['password'],
-            'role': UserRoles.ADMIN,
-            'status': UserStatus.ACTIVE,
-            'access_type': AccessType.FREE
-        }
-
-        try:
-            user = user_service.create_user(admin_data)
-            logging.info(f"Admin user created: {user['login']}")
-        except Exception as e:
-            logging.error(f"Failed to create admin: {e}")
+        # Администратор намеренно не создаётся автоматически.
+        # Учётная запись с паролем по умолчанию известна каждому,
+        # кто видел исходный код, поэтому её нужно создать вручную:
+        #     python create_admin.py
+        logging.warning(
+            "No users found. Create an administrator by running: "
+            "python create_admin.py"
+        )
 
     settings = storage.get_settings()
     if not settings:
@@ -322,9 +309,15 @@ def init_app():
     logging.info(f"Server will run at https://bakhtiyorsattaroff.pythonanywhere.com")
 
 
+# Инициализацию нужно выполнять при импорте модуля.
+# На сервере (WSGI/PythonAnywhere) app.py импортируется, а блок
+# __main__ не выполняется. Если вызывать init_app() только там,
+# blueprint'ы не регистрируются и каждый запрос падает с ошибкой 500.
+init_app()
+
+
 # ========== Запуск ==========
 if __name__ == '__main__':
-    init_app()
     host = os.environ.get('HOST', '0.0.0.0')
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('DEBUG', 'False').lower() == 'true'

@@ -35,17 +35,10 @@ class Config:
     SESSION_COOKIE_SECURE = True  # На сервере True
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
-    # Определяем окружение
-    IS_PYTHONANYWHERE = True  # Флаг для сервера
-    USERNAME = 'bakhtiyorsattaroff'
-
-    # Пути для PythonAnywhere
-    if IS_PYTHONANYWHERE:
-        HOME_DIR = f'/home/{USERNAME}'
-        BASE_DIR = os.path.join(HOME_DIR, 'education-platform')
-    else:
-        # Локальная разработка
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    # Корень проекта определяется по расположению этого файла.
+    # Так путь верен и на сервере, и на локальной машине, и не зависит
+    # ни от имени пользователя, ни от названия папки проекта.
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
     # Все директории
     DATA_DIR = os.path.join(BASE_DIR, 'data')
@@ -89,27 +82,16 @@ class Config:
     # Настройки пагинации
     ITEMS_PER_PAGE = 20
 
-    # Настройки администратора по умолчанию
-    DEFAULT_ADMIN = {
-        'login': 'admin',
-        'password': 'admin123',
-        'full_name': 'Administrator',
-        'email': 'bakhti0999@gmail.com',
-        'phone': '+998994399968'
-    }
-
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SECRET_KEY = 'dev-secret-key-2026'
     SESSION_COOKIE_SECURE = False
-    IS_PYTHONANYWHERE = False
 
 
 class ProductionConfig(Config):
     DEBUG = False
     SESSION_COOKIE_SECURE = True
-    IS_PYTHONANYWHERE = True
 
     def __init__(self):
         # Ключ берётся только из окружения, запасного значения в коде нет.
